@@ -8,14 +8,23 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row  // Added
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons  // Added
+import androidx.compose.material.icons.rounded.AccountCircle  // Added
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon  // Added
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -29,7 +38,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
         val onButtonClick: (String) -> Unit = { name ->
+            Toast.makeText(baseContext, "Hello $name", Toast.LENGTH_LONG).show()
+        }
+
+        val onSayHelloButtonClick: (name: String) -> Unit = { name ->
             Toast.makeText(baseContext, "Hello $name", Toast.LENGTH_LONG).show()
         }
 
@@ -37,8 +52,8 @@ class MainActivity : ComponentActivity() {
             AutomacorpTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        onClick = onButtonClick,
-                        modifier = Modifier.padding(innerPadding)
+                        onClick = onSayHelloButtonClick,
+                        modifier = Modifier.padding(innerPadding),
                     )
                 }
             }
@@ -59,6 +74,8 @@ fun AppLogo(modifier: Modifier) {
 
 @Composable
 fun Greeting(onClick: (String) -> Unit, modifier: Modifier = Modifier) {
+    var textFieldValue by remember { mutableStateOf("") }
+
     Column {
         AppLogo(
             Modifier
@@ -73,6 +90,22 @@ fun Greeting(onClick: (String) -> Unit, modifier: Modifier = Modifier) {
                 .align(Alignment.CenterHorizontally),
             textAlign = TextAlign.Center
         )
+
+        var name by remember { mutableStateOf("") }
+        OutlinedTextField(
+            name,
+            onValueChange = { name = it },
+            modifier = Modifier.padding(24.dp).fillMaxWidth(),
+            placeholder = {
+                Text(stringResource(R.string.act_main_fill_name))
+            })
+
+        Button(
+            onClick = { onClick(name) },
+            modifier = Modifier.padding(8.dp).align(Alignment.CenterHorizontally)
+        ) {
+            Text(stringResource(R.string.act_main_open))
+        }
     }
 }
 
