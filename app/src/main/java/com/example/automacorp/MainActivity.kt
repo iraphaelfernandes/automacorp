@@ -97,7 +97,14 @@ fun Greeting(onClick: (String) -> Unit, modifier: Modifier = Modifier) {
             onValueChange = { name = it },
             modifier = Modifier.padding(24.dp).fillMaxWidth(),
             placeholder = {
-                Text(stringResource(R.string.act_main_fill_name))
+                Row {
+                    Icon(
+                        Icons.Rounded.AccountCircle,
+                        modifier = Modifier.padding(end = 8.dp),
+                        contentDescription = stringResource(R.string.act_main_fill_name),
+                    )
+                    Text(stringResource(R.string.act_main_fill_name))
+                }
             })
 
         Button(
