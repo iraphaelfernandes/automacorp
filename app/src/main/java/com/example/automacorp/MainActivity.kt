@@ -1,9 +1,9 @@
 package com.example.automacorp
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -18,13 +18,19 @@ import androidx.compose.material3.Button
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        val onButtonClick: () -> Unit = {
+            // Here you can access to the activity state (ie baseContext)
+            Toast.makeText(baseContext, "Hello button", Toast.LENGTH_LONG).show()
+        }
+
         setContent {
             AutomacorpTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                        "Android",
+                        onClick = onButtonClick,
+                        modifier = Modifier.padding(innerPadding),
                     )
                 }
             }
@@ -32,8 +38,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun Greeting(name: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Column {
         Text(
             text = "Hello $name!",
@@ -56,6 +63,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     AutomacorpTheme {
-        Greeting("Android")
+        val onButtonClick = null
+        Greeting("Android", onClick = { onButtonClick })
     }
 }
