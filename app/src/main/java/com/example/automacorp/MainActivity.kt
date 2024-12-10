@@ -4,23 +4,29 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.paddingFromBaseline
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.automacorp.ui.theme.AutomacorpTheme
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val onButtonClick: () -> Unit = {
-            // Here you can access to the activity state (ie baseContext)
             Toast.makeText(baseContext, "Hello button", Toast.LENGTH_LONG).show()
         }
 
@@ -37,25 +43,26 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun AppLogo(modifier: Modifier) {
+    Image(
+        painter = painterResource(R.drawable.ic_logo),
+        contentDescription = stringResource(R.string.app_logo_description),
+        modifier = modifier.paddingFromBaseline(top = 100.dp).height(80.dp),
+    )
+}
+@Composable
+fun Greeting(onClick: (name: String) -> Unit,  modifier: Modifier = Modifier) {
     Column {
+        AppLogo(Modifier.padding(top = 32.dp).fillMaxWidth())
         Text(
-            text = "Hello $name!",
-            modifier = modifier
+            stringResource(R.string.act_main_welcome),
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier
+                .padding(24.dp)
+                .align(Alignment.CenterHorizontally),
+            textAlign = TextAlign.Center
         )
-        Text(
-            text = "I learn to create a new app",
-            modifier = modifier
-        )
-        Button(onClick = {}) {
-            Text(
-                text = "My first button",
-                modifier = modifier
-            )
-        }
     }
 }
 
@@ -63,7 +70,9 @@ fun Greeting(name: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
 @Composable
 fun GreetingPreview() {
     AutomacorpTheme {
-        val onButtonClick = null
-        Greeting("Android", onClick = { onButtonClick })
+        Greeting(
+            "Android",
+            onClick = {}  // Fixed: Provide an empty lambda instead of null
+        )
     }
 }
