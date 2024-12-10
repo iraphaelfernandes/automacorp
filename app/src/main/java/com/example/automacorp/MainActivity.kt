@@ -2,26 +2,30 @@ package com.example.automacorp
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row  // Added
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.paddingFromBaseline
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons  // Added
-import androidx.compose.material.icons.rounded.AccountCircle  // Added
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFromBaseline
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon  // Added
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,29 +35,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.automacorp.services.RoomViewModel
 import com.example.automacorp.ui.theme.AutomacorpTheme
+import androidx.compose.runtime.collectAsState
 
 class MainActivity : ComponentActivity() {
+    private val roomViewModel: RoomViewModel by viewModels()
 
     companion object {
         const val ROOM_PARAM = "com.automacorp.room.attribute"
     }
 
+
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val onButtonClick: (String) -> Unit = { name ->
-            Toast.makeText(baseContext, "Hello $name", Toast.LENGTH_LONG).show()
-        }
-
         val onSayHelloButtonClick: (name: String) -> Unit = { name ->
-            val intent = Intent(this, RoomActivity::class.java).apply {
-                putExtra(ROOM_PARAM, name)
+            val validRoomPattern = Regex("^r.*", RegexOption.IGNORE_CASE)
+            val intent = if (validRoomPattern.matches(name)) {
+                Intent(this, RoomActivity::class.java).apply {
+                    putExtra(ROOM_PARAM, name)
+                }
+            } else {
+                Intent(this, NotFoundActivity::class.java)
             }
             startActivity(intent)
         }
+
 
         setContent {
             AutomacorpTheme {
@@ -68,37 +78,32 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun AppLogo(modifier: Modifier) {
     Image(
         painter = painterResource(R.drawable.ic_logo),
         contentDescription = stringResource(R.string.app_logo_description),
-        modifier = modifier
-            .paddingFromBaseline(top = 100.dp)
-            .height(80.dp)
+        modifier = modifier.paddingFromBaseline(top = 100.dp).height(80.dp),
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Greeting(onClick: (String) -> Unit, modifier: Modifier = Modifier) {
-    var textFieldValue by remember { mutableStateOf("") }
+fun Greeting(onClick: (name: String) -> Unit, modifier: Modifier = Modifier) {
 
     Column {
-        AppLogo(
-            Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth()
-        )
+        AppLogo(Modifier.padding(top = 32.dp).fillMaxWidth())
         Text(
-            text = stringResource(R.string.act_main_welcome),
+            stringResource(R.string.act_main_welcome),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier
                 .padding(24.dp)
                 .align(Alignment.CenterHorizontally),
             textAlign = TextAlign.Center
         )
-
         var name by remember { mutableStateOf("") }
+
         OutlinedTextField(
             name,
             onValueChange = { name = it },
@@ -120,15 +125,5 @@ fun Greeting(onClick: (String) -> Unit, modifier: Modifier = Modifier) {
         ) {
             Text(stringResource(R.string.act_main_open))
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AutomacorpTheme {
-        Greeting(
-            onClick = {}
-        )
     }
 }
